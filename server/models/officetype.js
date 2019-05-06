@@ -4,7 +4,7 @@ module.exports = (sequelize, DataTypes) => {
   const OfficeType = sequelize.define('OfficeType', {
     type: {
       allowNull: false,
-      type:DataTypes.String
+      type: DataTypes.STRING
     },
   }, {});
   OfficeType.associate = function(models) {
