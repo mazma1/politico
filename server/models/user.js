@@ -1,5 +1,7 @@
 'use strict';
 
+import bcrypt from 'bcrypt';
+
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define('User', {
     firstname: {
@@ -20,6 +22,10 @@ module.exports = (sequelize, DataTypes) => {
       validate: {
         not: ['[a-z]', 'i']
       }
+    },
+    password: {
+      type: DataTypes.STRING,
+      allowNull: false,
     },
     isAdmin: {
       allowNull: false,
@@ -42,5 +48,15 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
   
+  User.prototype.hashPassword = (user) => user.password = bcrypt.hashSync(
+    user.password, bcrypt.genSaltSync(8)
+  );
+
+  User.beforeCreate((user) => {
+    if (user.password) {
+      return user.hashPassword(user);
+    }
+  });
+
   return User;
 };

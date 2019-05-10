@@ -28,6 +28,10 @@ module.exports = {
             not: ['[a-z]', 'i']
           }
         },
+        password: {
+          type: Sequelize.STRING,
+          allowNull: false,
+        },
         isAdmin: {
           allowNull: false,
           type: Sequelize.ENUM('0', '1'),
