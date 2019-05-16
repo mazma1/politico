@@ -1,8 +1,17 @@
 import { User } from '../../../models';
 import { validationResult } from 'express-validator/check';
-import { parseErrors } from '../middleware/validate';
+import { parseErrors } from '../middleware/validateInput';
+import generateToken from '../../../utils/generateToken';
 
 const authController = {
+  /**
+    * Creates a new user
+    * Route: POST: /api/v1/auth/signup
+    * 
+    * @param {object} req - Incoming request from the client
+    * @param {object} res - Response sent back to client
+    * @returns {object} Authentication token and user details
+  */
   signup: async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -13,12 +22,12 @@ const authController = {
     const { firstname, lastname, email, password, phoneNumber } = req.body
     try {
       const newUser = await User.create({ firstname, lastname, email, password, phoneNumber });
+      const token = generateToken(newUser);
+
       return res.status(201).json({
         data: {
-          token: 'to be disclosed',
-          user: { 
-            id: newUser.id,
-            isAdmin: newUser.isAdmin,
+          token,
+          user: {
             firstname: newUser.firstname,
             lastname: newUser.lastname,
             email: newUser.email, 
