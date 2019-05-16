@@ -1,7 +1,13 @@
 import { body } from 'express-validator/check';
 import { User } from '../../../models';
 
-export const validate = (controllerMethod) => {
+/**
+  * Validates user inputs for signup
+  *
+  * @param {any} controllerMethod The authentication to be performed (signup | signin)
+  * @returns {object} Result of validation
+*/
+export const validateInput = (controllerMethod) => {
   switch (controllerMethod) {
     case 'signup':
       return [ 
@@ -46,4 +52,3 @@ export const parseErrors = (errors) => {
   });
   return parsed;
 };
-
