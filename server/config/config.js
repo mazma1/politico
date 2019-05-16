@@ -2,19 +2,16 @@ require('dotenv').config();
 
 module.exports = {
   development: {
-    username: "andeladeveloper",
-    password: null,
-    database: "politico-dev",
-    host: "localhost",
+    use_env_variable: 'DEV_URL',
     dialect: 'postgres'
   },
   test: {
-    use_env_variable: process.env.TEST_URL,
+    use_env_variable: 'TEST_URL',
     dialect: 'postgres',
     logging: false,
   },
   production: {
-    use_env_variable: process.env.PROD_URL,
+    use_env_variable: 'PROD_URL',
     dialect: 'postgres'
   },
 };
