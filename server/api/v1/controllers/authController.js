@@ -1,30 +1,29 @@
 import { User } from '../../../models';
-import { validationResult } from 'express-validator/check';
-import { parseErrors } from '../middleware/validateInput';
+import { validationHandler } from '../middleware/validateInput';
 import generateToken from '../../../utils/generateToken';
+import response from '../../../utils/responseWrapper';
 
 const authController = {
   /**
     * Creates a new user
-    * Route: POST: /api/v1/auth/signup
+    * Route: POST /api/v1/auth/signup
     * 
-    * @param {object} req - Incoming request from the client
-    * @param {object} res - Response sent back to client
+    * @param {object} req - Incoming request object from the client
+    * @param {object} res - Response object sent back to client
     * @returns {object} Authentication token and user details
   */
   signup: async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      const parsedErrors = parseErrors(errors.array({ onlyFirstError: true }));
-      return res.status(422).json({ errors: parsedErrors })
+    const validationError = validationHandler(req);
+
+    if (validationError) {
+      return response(422, { errors: validationError }, res);
     }
 
     const { firstname, lastname, email, password, phoneNumber } = req.body
     try {
       const newUser = await User.create({ firstname, lastname, email, password, phoneNumber });
       const token = generateToken(newUser);
-
-      return res.status(201).json({
+      const payload = {
         data: {
           token,
           user: {
@@ -34,9 +33,10 @@ const authController = {
             phoneNumber:newUser.phoneNumber 
           }
         } 
-      })
+      };
+      return response(201, payload, res);
     } catch(error) {
-      return res.status(500).json({ error: error.message });
+      return response(500, { error: error.message }, res);
     }
     
   }
