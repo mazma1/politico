@@ -1,9 +1,8 @@
-import { body } from 'express-validator/check';
 import { User } from '../../../models';
 import { body, validationResult } from 'express-validator/check';
 
 /**
-  * Validates user inputs for signup
+  * Validates user inputs for signup and login
   *
   * @param {string} controllerMethod The authentication to be performed (signup|signin)
   * @returns {object} Result of validation
@@ -39,7 +38,20 @@ export const validateInput = (controllerMethod) => {
           .trim()
           .isLength({ min: 1 }).withMessage('Password confirmation is required')
           .custom((value, { req }) => (value === req.body.password)),
-      ]
+      ];
+
+    case 'login':
+      return [
+        body('email', 'Email is required for login')
+          .normalizeEmail()
+          .isLength({ min: 1 })
+          .isEmail().withMessage('Please provide a valid email address'),
+
+        body('password', 'Password is required for login')
+          .trim()
+          .exists()
+          .isLength({ min: 1 }).withMessage('Password cannot be empty'),
+      ];
   
     default:
       break;
