@@ -1,10 +1,11 @@
 import { body } from 'express-validator/check';
 import { User } from '../../../models';
+import { body, validationResult } from 'express-validator/check';
 
 /**
   * Validates user inputs for signup
   *
-  * @param {any} controllerMethod The authentication to be performed (signup | signin)
+  * @param {string} controllerMethod The authentication to be performed (signup|signin)
   * @returns {object} Result of validation
 */
 export const validateInput = (controllerMethod) => {
@@ -45,10 +46,19 @@ export const validateInput = (controllerMethod) => {
   }
 };
 
-export const parseErrors = (errors) => {
-  let parsed = {};
-  errors.forEach(error => {
-    parsed[error.param] = error.msg
-  });
-  return parsed;
+/**
+ * Formats the error messages returend from express validator (if any)
+ *
+ * @param {object} req Request object from the client
+ * @returns {object} Error object foratted as key- value pairs
+ */
+export const validationHandler = (req) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    let parsedErrors = {};
+    errors.array({ onlyFirstError: true }).forEach(error => {
+      parsedErrors[error.param] = error.msg
+    });
+    return parsedErrors;
+  }
 };
