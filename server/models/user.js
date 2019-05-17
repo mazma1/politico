@@ -47,10 +47,19 @@ module.exports = (sequelize, DataTypes) => {
       return Promise.resolve('Email has not been used')
     }
   };
-  
+
+  User.findByLogin = async (login) => {
+    const user = await User.findOne({
+      where: { email: login }
+    });
+    return user;
+  }
+
   User.prototype.hashPassword = (user) => user.password = bcrypt.hashSync(
     user.password, bcrypt.genSaltSync(8)
   );
+
+  User.prototype.isCorrectPassword = (reqPassword, user) => bcrypt.compareSync(reqPassword, user.password);
 
   User.beforeCreate((user) => {
     if (user.password) {
