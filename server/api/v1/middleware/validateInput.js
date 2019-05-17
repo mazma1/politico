@@ -1,16 +1,20 @@
-import { User } from '../../../models';
+/* eslint newline-per-chained-call: off */
+
 import { body, validationResult } from 'express-validator/check';
+import { User } from '../../../models';
 
 /**
   * Validates user inputs for signup and login
   *
-  * @param {string} controllerMethod The authentication to be performed (signup|signin)
+  * @param {string} controllerMethod Authentication to be performed (signup|signin)
   * @returns {object} Result of validation
 */
 export const validateInput = (controllerMethod) => {
+  let errors;
+
   switch (controllerMethod) {
     case 'signup':
-      return [ 
+      errors = [
         body('firstname')
           .trim()
           .isLength({ min: 1 }).withMessage('A firstname must be specified')
@@ -25,7 +29,7 @@ export const validateInput = (controllerMethod) => {
           .normalizeEmail()
           .isLength({ min: 1 }).withMessage('Email is required')
           .isEmail().withMessage('Please provide a valid email address')
-          .custom(async (value) => await User.lookupEmail(value)),
+          .custom(value => User.lookupEmail(value)),
 
         body('phoneNumber', 'Phone Number must be an 11 digit number')
           .optional().isInt().isLength({ min: 1, max: 11 }),
@@ -33,15 +37,16 @@ export const validateInput = (controllerMethod) => {
         body('password')
           .trim()
           .isLength({ min: 1 }).withMessage('Password is required'),
-        
+
         body('confirmPassword', 'Password confirmation does not match password')
           .trim()
           .isLength({ min: 1 }).withMessage('Password confirmation is required')
           .custom((value, { req }) => (value === req.body.password)),
       ];
+      break;
 
     case 'login':
-      return [
+      errors = [
         body('email', 'Email is required for login')
           .normalizeEmail()
           .isLength({ min: 1 })
@@ -52,10 +57,13 @@ export const validateInput = (controllerMethod) => {
           .exists()
           .isLength({ min: 1 }).withMessage('Password cannot be empty'),
       ];
-  
+      break;
+
     default:
       break;
   }
+
+  return errors;
 };
 
 /**
@@ -66,11 +74,13 @@ export const validateInput = (controllerMethod) => {
  */
 export const validationHandler = (req) => {
   const errors = validationResult(req);
+  const parsedErrors = {};
+
   if (!errors.isEmpty()) {
-    let parsedErrors = {};
-    errors.array({ onlyFirstError: true }).forEach(error => {
-      parsedErrors[error.param] = error.msg
+    errors.array({ onlyFirstError: true }).forEach((error) => {
+      parsedErrors[error.param] = error.msg;
     });
-    return parsedErrors;
   }
+
+  return parsedErrors;
 };

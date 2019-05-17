@@ -9,4 +9,4 @@ export default (app, express) => {
   app.use(express.urlencoded({ extended: false }));
   app.use(expressValidator());
   app.use('/api/v1', routes);
-}
+};

@@ -9,9 +9,9 @@ import jwt from 'jsonwebtoken';
 function generateToken(user) {
   const { id, isAdmin } = user;
   const token = jwt.sign({
-    data: { 
-      id, isAdmin
-    }
+    data: {
+      id, isAdmin,
+    },
   }, process.env.TOKEN_SECRET, { expiresIn: '12h' });
   return token;
 }
