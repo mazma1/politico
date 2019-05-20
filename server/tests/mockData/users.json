@@ -50,5 +50,14 @@
   {
     "email": "gudi@gmail.com",
     "password": "123456"
+  },
+
+  {
+    "firstname": "Harey",
+    "lastname": "Prime",
+    "email": "harey@gmail.com",
+    "phoneNumber": "08061234567",
+    "password": "123456",
+    "confirmPassword": "123456"
   }
 ]
