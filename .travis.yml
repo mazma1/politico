@@ -2,12 +2,15 @@ language: node_js
 node_js:
   - "10.15.3"
 install:
+  - npm install
   - npm install -g codecov
 services:
   - postgresql
 before_script:
-- psql -c 'create database politico-test;' -U postgres
+- psql -c 'create database "politico-test";' -U postgres
 - psql -c "create user andeladeveloper;" -U postgres
 after_success:
   - npm run report-coverage-coveralls
   - npm run report-coverage-codecov
+notifications:
+  email: false
