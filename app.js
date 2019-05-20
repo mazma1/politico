@@ -11,7 +11,9 @@ const loadApp = (req, res, next) => {
   const version = match[1] || '';
 
   if (version !== '') {
-    const appPath = path.join(__dirname, `./server/api/${version}/index.js`);
+    const appPath = process.env.NODE_ENV !== 'production'
+      ? path.join(__dirname, `./server/api/${version}/index.js`)
+      : path.join(__dirname, `./api/${version}/index.js`);
     const pathExists = fs.existsSync(appPath);
 
     if (!pathExists) {

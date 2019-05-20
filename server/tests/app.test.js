@@ -25,4 +25,14 @@ describe('App.js', function () {
         done();
       });
   });
+
+  it('should return status 200 and a message if the v1 base API URL is specified', function (done) {
+    chai.request(app)
+      .get('/api/v1')
+      .end((err, res) => {
+        res.status.should.equal(200);
+        res.body.should.have.property('message').eql('Welcome to Politico API');
+        done();
+      });
+  });
 });
