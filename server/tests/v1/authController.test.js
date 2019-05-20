@@ -1,4 +1,5 @@
 import chai from 'chai';
+import sinon from 'sinon';
 import chaiHttp from 'chai-http';
 import app from '../../../app';
 import { User } from '../../models';
@@ -97,6 +98,32 @@ describe('Auth Endpoint', function () {
           done();
         });
     });
+
+    describe('error handler', function () {
+      let stubCreateUser;
+
+      beforeEach(function (done) {
+        stubCreateUser = sinon.stub(User, 'create').rejects({ message: 'Internal server error' });
+        done();
+      });
+
+      afterEach((done) => {
+        stubCreateUser.restore();
+        done();
+      });
+
+      it('should return status 500 with corresponding error message', function (done) {
+        chai.request(app)
+          .post(endpoints.signup)
+          .type('form')
+          .send(users[8])
+          .end((err, res) => {
+            res.status.should.equal(500);
+            res.body.should.have.property('error').eql('Internal server error');
+            done();
+          });
+      });
+    });
   });
 
   describe('POST /api/v1/auth/signin', function () {
@@ -131,7 +158,7 @@ describe('Auth Endpoint', function () {
         });
     });
 
-    it('should return status 401 for an email that does not exist', function (done) {
+    it('should return status 401 for a user/email that does not exist', function (done) {
       chai.request(app)
         .post(endpoints.login)
         .type('form')
@@ -142,6 +169,32 @@ describe('Auth Endpoint', function () {
           res.body.should.have.property('error').eql('Invalid username or password');
           done();
         });
+    });
+
+    describe('error handler', function () {
+      let stubFindByLogin;
+
+      beforeEach(function (done) {
+        stubFindByLogin = sinon.stub(User, 'findByLogin').rejects({ message: 'Internal server error' });
+        done();
+      });
+
+      afterEach((done) => {
+        stubFindByLogin.restore();
+        done();
+      });
+
+      it('should return status 500 with corresponding error message', function (done) {
+        chai.request(app)
+          .post(endpoints.login)
+          .type('form')
+          .send(users[5])
+          .end((err, res) => {
+            res.status.should.equal(500);
+            res.body.should.have.property('error').eql('Internal server error');
+            done();
+          });
+      });
     });
   });
 });
