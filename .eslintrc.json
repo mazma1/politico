@@ -4,5 +4,18 @@
     "object-curly-newline": ["error", {
       "ObjectPattern": { "multiline": true }
     }]
+  },
+  "overrides": [
+    {
+      "files": ["*.test.js"],
+      "rules": {
+        "func-names": "off",
+        "prefer-arrow-callback": "off",
+        "no-unused-vars": "off"
+      }
+    }
+  ],
+  "env": {
+    "mocha": true
   }
 }
