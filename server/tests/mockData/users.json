@@ -1,0 +1,54 @@
+[
+  {
+    "firstname": "Ola",
+    "lastname": "Davis",
+    "email": "ola@gmail.com",
+    "phoneNumber": "08061234567",
+    "password": "123456",
+    "confirmPassword": "123456"
+  },
+
+  {}, 
+
+  {
+    "firstname": "Coco",
+    "lastname": "Davis",
+    "email": "ola@gmail.com",
+    "phoneNumber": "08061234567",
+    "password": "123456",
+    "confirmPassword": "123456"
+  },
+
+  {
+    "firstname": "1234",
+    "lastname": "1234",
+    "email": "empty@gmail.com",
+    "phoneNumber": "08061234567",
+    "password": "123456",
+    "confirmPassword": "123456"
+  },
+
+  {
+    "firstname": "Neo",
+    "lastname": "Cafe",
+    "email": "neo@gmail.com",
+    "phoneNumber": "08061234567",
+    "password": "1234567",
+    "confirmPassword": "123456"
+  },
+
+  {
+    "email": "ola@gmail.com",
+    "password": "123456"
+  },
+
+  {
+    "email": "olagmail.com",
+    "password": "123456"
+  },
+
+  {
+    "email": "gudi@gmail.com",
+    "password": "123456"
+  }
+]
