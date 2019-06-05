@@ -1,10 +1,9 @@
-import express from 'express';
 import { validateInput } from '../middleware/validateInput';
 import controller from '../controllers/authController';
 
-const authRouter = express.Router();
+const authRoutes = (router) => {
+  router.post('/auth/signup', validateInput('signup'), controller.signup);
+  router.post('/auth/login', validateInput('login'), controller.login);
+};
 
-authRouter.post('/auth/signup', validateInput('signup'), controller.signup);
-authRouter.post('/auth/login', validateInput('login'), controller.login);
-
-export default authRouter;
+export default authRoutes;
