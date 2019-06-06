@@ -19,9 +19,11 @@ const authController = {
       return response(422, { errors: validationError }, res);
     }
 
-    const { firstname, lastname, email, password, phoneNumber } = req.body;
+    const { firstname, lastname, email, password, phoneNumber, isAdmin } = req.body;
     try {
-      const newUser = await User.create({ firstname, lastname, email, password, phoneNumber });
+      const newUser = await User.create({
+        firstname, lastname, email, phoneNumber, password, isAdmin,
+      });
       const token = generateToken(newUser);
       const payload = {
         data: {

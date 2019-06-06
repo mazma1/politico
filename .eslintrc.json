@@ -3,7 +3,8 @@
   "rules": {
     "object-curly-newline": ["error", {
       "ObjectPattern": { "multiline": true }
-    }]
+    }],
+    "no-unused-expressions": ["error", { "allowTernary": true }]
   },
   "overrides": [
     {
