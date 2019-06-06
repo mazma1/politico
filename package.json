@@ -4,12 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "rimraf ./server/dist/ && babel ./server ./app.js ./server.js --out-dir ./server/dist/ --ignore ./test --copy-files",
+    "build": "rimraf ./server/dist/ && babel ./server ./app.js --out-dir ./server/dist/ --ignore ./test --copy-files",
     "test": "NODE_ENV=test nyc --reporter=html --reporter=text mocha --recursive --require babel-register ./server/tests/",
-    "start": "node  ./server/dist/server.js",
-    "start:dev": "nodemon -r babel-register server.js",
+    "start": "node ./server/dist/server.js",
+    "start:dev": "nodemon -r babel-register ./server/server.js",
     "db:migrate": "sequelize db:migrate:undo:all && sequelize db:migrate && sequelize db:seed:all",
     "create:testdb": "NODE_ENV=test npm run db:migrate",
+    "coverage:dev": "nyc report --reporter=text-lcov",
     "report-coverage-coveralls": "nyc report --reporter=text-lcov | coveralls",
     "report-coverage-codecov": "nyc report --reporter=text-lcov > coverage.lcov && codecov"
   },

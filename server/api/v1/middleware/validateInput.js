@@ -59,6 +59,27 @@ export const validateInput = (controllerMethod) => {
       ];
       break;
 
+    case 'party':
+      errors = [
+        body('name', 'Please provide a party name')
+          .trim()
+          .isLength({ min: 1 })
+          .escape(),
+
+        body('hqAddress', 'HQ Address cannot be empty')
+          .optional()
+          .trim()
+          .isLength({ min: 1 })
+          .escape(),
+
+        body('logoUrl', 'Logo URL cannot be empty')
+          .optional()
+          .trim()
+          .isLength({ min: 1 })
+          .escape(),
+      ];
+      break;
+
     default:
       break;
   }
