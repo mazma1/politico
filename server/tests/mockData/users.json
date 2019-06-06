@@ -59,5 +59,15 @@
     "phoneNumber": "08061234567",
     "password": "123456",
     "confirmPassword": "123456"
+  },
+
+  {
+    "firstname": "Test",
+    "lastname": "Admin",
+    "email": "admin@gmail.com",
+    "phoneNumber": "08061234567",
+    "password": "123456",
+    "confirmPassword": "123456",
+    "isAdmin": "1"
   }
 ]
