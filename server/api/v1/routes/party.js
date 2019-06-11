@@ -19,6 +19,12 @@ const partyRoutes = (router) => {
       sanitizeParam('id'),
       validateInput('party'),
       controller.updateParty,
+    )
+    .delete(
+      Authorize.isLoggedIn,
+      Authorize.isAdmin,
+      sanitizeParam('id'),
+      controller.deleteParty,
     );
 };
 

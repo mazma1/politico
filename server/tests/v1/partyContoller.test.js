@@ -182,7 +182,7 @@ describe('Parties Endpoint', function () {
         .patch(`${endpoints.parties}/2`)
         .set('authorization', adminToken)
         .type('form')
-        .send(parties[2])
+        .send(parties[9])
         .end((err, res) => {
           res.status.should.equal(422);
           res.body.errors.name.should.equal('Please provide a party name');
@@ -209,6 +209,73 @@ describe('Parties Endpoint', function () {
           .set('authorization', adminToken)
           .type('form')
           .send(parties[0])
+          .end((err, res) => {
+            res.status.should.equal(500);
+            res.body.should.have.property('error').eql('Internal server error');
+            done();
+          });
+      });
+    });
+  });
+
+  describe('DELETE /api/v1/parties', function () {
+    let id;
+    let testParty;
+
+    before(function (done) {
+      Party.findOne({ where: { name: parties[1].name } })
+        .then((party) => {
+          ({ id } = party.dataValues);
+          testParty = party;
+        })
+        .then(() => {
+          Party.create(parties[2]);
+        });
+      done();
+    });
+
+    it('should return an error if specified party for deletion does not exist', function (done) {
+      chai.request(app)
+        .delete(`${endpoints.parties}/9`)
+        .set('authorization', adminToken)
+        .type('form')
+        .end((err, res) => {
+          res.status.should.equal(404);
+          res.body.error.should.equal('Party not found');
+          done();
+        });
+    });
+
+    it('should delete a specified party', function (done) {
+      chai.request(app)
+        .delete(`${endpoints.parties}/${id}`)
+        .set('authorization', adminToken)
+        .type('form')
+        .end((err, res) => {
+          res.status.should.equal(200);
+          res.body.message.should.equal(`${testParty.name} successfully deleted`);
+          done();
+        });
+    });
+
+    describe('error handler', function () {
+      let stubDeleteParty;
+
+      beforeEach(function (done) {
+        stubDeleteParty = sinon.stub(Party.prototype, 'destroy').rejects({ message: 'Internal server error' });
+        done();
+      });
+
+      afterEach((done) => {
+        stubDeleteParty.restore();
+        done();
+      });
+
+      it('should return status 500 with corresponding error message', function (done) {
+        chai.request(app)
+          .delete(`${endpoints.parties}/2`)
+          .set('authorization', adminToken)
+          .type('form')
           .end((err, res) => {
             res.status.should.equal(500);
             res.body.should.have.property('error').eql('Internal server error');
