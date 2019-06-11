@@ -140,4 +140,81 @@ describe('Parties Endpoint', function () {
       });
     });
   });
+
+  describe('PATCH /api/v1/parties', function () {
+    let id;
+
+    before(function (done) {
+      Party.findOne({ where: { name: parties[0].name } }).then((party) => {
+        ({ id } = party.dataValues);
+        done();
+      });
+    });
+
+    it('should update specified party detail(s) for authorized users', function (done) {
+      chai.request(app)
+        .patch(`${endpoints.parties}/${id}`)
+        .set('authorization', adminToken)
+        .type('form')
+        .send(parties[1])
+        .end((err, res) => {
+          res.status.should.equal(200);
+          res.body.data.name.should.equal(parties[1].name);
+          done();
+        });
+    });
+
+    it('should return an error if party (id) to be updated does not exist', function (done) {
+      chai.request(app)
+        .patch(`${endpoints.parties}/2`)
+        .set('authorization', adminToken)
+        .type('form')
+        .send(parties[1])
+        .end((err, res) => {
+          res.status.should.equal(404);
+          res.body.error.should.equal('Party not found');
+          done();
+        });
+    });
+
+    it('should return an error if required field for update is missing', function (done) {
+      chai.request(app)
+        .patch(`${endpoints.parties}/2`)
+        .set('authorization', adminToken)
+        .type('form')
+        .send(parties[2])
+        .end((err, res) => {
+          res.status.should.equal(422);
+          res.body.errors.name.should.equal('Please provide a party name');
+          done();
+        });
+    });
+
+    describe('error handler', function () {
+      let stubUpdateParty;
+
+      beforeEach(function (done) {
+        stubUpdateParty = sinon.stub(Party.prototype, 'update').rejects({ message: 'Internal server error' });
+        done();
+      });
+
+      afterEach((done) => {
+        stubUpdateParty.restore();
+        done();
+      });
+
+      it('should return status 500 with corresponding error message', function (done) {
+        chai.request(app)
+          .patch(`${endpoints.parties}/${id}`)
+          .set('authorization', adminToken)
+          .type('form')
+          .send(parties[0])
+          .end((err, res) => {
+            res.status.should.equal(500);
+            res.body.should.have.property('error').eql('Internal server error');
+            done();
+          });
+      });
+    });
+  });
 });
