@@ -44,6 +44,19 @@ const partyController = {
       return response(500, { error: error.message }, res);
     }
   },
+
+  deleteParty: async (req, res) => {
+    const party = await Party.findByPk(req.params.id);
+    if (!party) {
+      return response(404, { error: 'Party not found' }, res);
+    }
+    try {
+      await party.destroy();
+      return response(200, { message: `${party.name} successfully deleted` }, res);
+    } catch (error) {
+      return response(500, { error: error.message }, res);
+    }
+  },
 };
 
 export default partyController;
