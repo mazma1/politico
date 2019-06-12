@@ -1,4 +1,6 @@
-import app from '../app';
+const app = process.env.NODE_ENV !== 'production'
+  ? require('../app').default
+  : require('./app').default;
 
 const port = process.env.PORT || 4000;
 
