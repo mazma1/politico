@@ -5,6 +5,10 @@ import { validateInput } from '../middleware/validateInput';
 
 const partyRoutes = (router) => {
   router.route('/parties')
+    .get(
+      Authorize.isLoggedIn,
+      controller.getParties,
+    )
     .post(
       Authorize.isLoggedIn,
       Authorize.isAdmin,

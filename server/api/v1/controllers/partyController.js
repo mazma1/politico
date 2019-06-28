@@ -1,5 +1,6 @@
 import { Party } from '../../../models';
 import helpers from '../../../utils/helpers';
+import paginate from '../../../utils/paginate';
 import response from '../../../utils/responseWrapper';
 import { validationHandler } from '../middleware/validateInput';
 
@@ -53,6 +54,21 @@ const partyController = {
     try {
       await party.destroy();
       return response(200, { message: `${party.name} successfully deleted` }, res);
+    } catch (error) {
+      return response(500, { error: error.message }, res);
+    }
+  },
+
+  getParties: async (req, res) => {
+    const { currentPage = 1, pageSize = 2 } = req.query;
+
+    try {
+      const parties = await Party.findAndCountAll({
+        attributes: ['name', 'hqAddress', 'logoUrl'],
+        ...paginate({ currentPage, pageSize }),
+      });
+      const payload = { data: { parties: parties.rows, count: parties.count } };
+      return response(200, payload, res);
     } catch (error) {
       return response(500, { error: error.message }, res);
     }
