@@ -284,4 +284,47 @@ describe('Parties Endpoint', function () {
       });
     });
   });
+
+  describe('GET /api/v1/parties', function () {
+    before(function (done) {
+      Party.bulkCreate(parties.splice(3)).then(done());
+    });
+
+    it('should return the number of parties specified by the offset value', function (done) {
+      chai.request(app)
+        .get(`${endpoints.parties}?pageSize=2&currentPage=1`)
+        .set('authorization', userToken)
+        .end((err, res) => {
+          res.status.should.equal(200);
+          res.body.data.count.should.equal(5);
+          res.body.data.parties.length.should.equal(2);
+          done();
+        });
+    });
+
+    describe('error handler', function () {
+      let findAndCountParties;
+
+      beforeEach(function (done) {
+        findAndCountParties = sinon.stub(Party, 'findAndCountAll').rejects({ message: 'Internal server error' });
+        done();
+      });
+
+      afterEach((done) => {
+        findAndCountParties.restore();
+        done();
+      });
+
+      it('should return status 500 with corresponding error message', function (done) {
+        chai.request(app)
+          .get(endpoints.parties)
+          .set('authorization', userToken)
+          .end((err, res) => {
+            res.status.should.equal(500);
+            res.body.should.have.property('error').eql('Internal server error');
+            done();
+          });
+      });
+    });
+  });
 });
