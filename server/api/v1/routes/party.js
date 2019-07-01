@@ -17,6 +17,11 @@ const partyRoutes = (router) => {
     );
 
   router.route('/parties/:id')
+    .get(
+      Authorize.isLoggedIn,
+      sanitizeParam('id'),
+      controller.getParty,
+    )
     .patch(
       Authorize.isLoggedIn,
       Authorize.isAdmin,
