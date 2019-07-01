@@ -73,6 +73,20 @@ const partyController = {
       return response(500, { error: error.message }, res);
     }
   },
+
+  getParty: async (req, res) => {
+    try {
+      const party = await Party.findByPk(req.params.id, {
+        attributes: ['name', 'hqAddress', 'logoUrl'],
+      });
+      return party && response(200, { data: party }, res);
+    } catch (error) {
+      if (error.message.includes('invalid input syntax for type uuid') || error.message.search(/invalid input syntax for type uuid/)) {
+        return response(404, { error: 'Party with specified ID not found' }, res);
+      }
+      return response(500, { error: error.message }, res);
+    }
+  },
 };
 
 export default partyController;

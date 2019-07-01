@@ -327,4 +327,41 @@ describe('Parties Endpoint', function () {
       });
     });
   });
+
+  describe('GET /api/v1/parties/:id', function () {
+    let id;
+    let testParty;
+
+    before(function (done) {
+      Party.findOne({ where: { name: parties[2].name } })
+        .then((party) => {
+          ({ id } = party.dataValues);
+          testParty = party;
+          done();
+        });
+    });
+
+    it('should return an error if specified party does not exist', function (done) {
+      chai.request(app)
+        .get(`${endpoints.parties}/:id`)
+        .set('authorization', adminToken)
+        .set('id', 20)
+        .end((err, res) => {
+          res.status.should.equal(404);
+          res.body.error.should.equal('Party with specified ID not found');
+          done();
+        });
+    });
+
+    it('should get a specified party\'s record', function (done) {
+      chai.request(app)
+        .get(`${endpoints.parties}/${id}`)
+        .set('authorization', userToken)
+        .end((err, res) => {
+          res.status.should.equal(200);
+          res.body.data.name.should.equal(`${testParty.name}`);
+          done();
+        });
+    });
+  });
 });
